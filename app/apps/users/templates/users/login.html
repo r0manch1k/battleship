@@ -1,0 +1,40 @@
+{% extends "users/base.html" %}
+
+{% block title %}
+  Вход
+{% endblock %}
+
+{% block auth_content %}
+  <div class="block__header">Вход</div>
+
+  <div class="block__main">
+    {% if form.errors %}
+      <div class="message message_error">Неверный логин или пароль.</div>
+    {% endif %}
+
+    <form method="post" class="auth__form">
+      {% csrf_token %}
+
+      <div class="form__group">
+        <label for="{{ form.username.id_for_label }}"> Логин </label>
+
+        {{ form.username }}
+      </div>
+
+      <div class="form__group">
+        <label for="{{ form.password.id_for_label }}"> Пароль </label>
+
+        {{ form.password }}
+      </div>
+
+      <input type="hidden" name="next" value="{{ next }}" />
+
+      <button type="submit" class="button">Войти</button>
+    </form>
+
+    <div class="auth__links">
+      <a href="{% url 'password_reset' %}"> Забыли пароль? </a>
+      <a href="{% url 'register' %}"> Создать аккаунт </a>
+    </div>
+  </div>
+{% endblock %}

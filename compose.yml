@@ -1,0 +1,18 @@
+services:
+  battleship-app:
+    build: .
+    image: battleship-app:latest
+    ports:
+      - "${APP_PORT}:8000"
+    environment:
+      - APP_NAME=${APP_NAME}
+      - LOG_LEVEL=${LOG_LEVEL}
+      - SECRET_KEY=${SECRET_KEY}
+      - DEBUG=${DEBUG}
+      - TZ=${TZ}
+    volumes:
+      - ./app:/app/app:cached
+      - ./app/data:/app/app/data
+    command: >
+      python -m app.manage runserver 0.0.0.0:8000
+    restart: unless-stopped

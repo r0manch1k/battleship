@@ -1,0 +1,54 @@
+{
+  "html": {
+    "customData": [
+      {
+        "version": "1.0",
+        "tags": [
+          {
+            "name": "include:button",
+            "description": "Button component",
+            "attributes": [
+              {
+                "name": "variant",
+                "description": "Button variant",
+                "values": [
+                  { "name": "primary" },
+                  { "name": "secondary" },
+                  { "name": "danger" }
+                ]
+              },
+              {
+                "name": "size", 
+                "description": "Button size",
+                "values": [
+                  { "name": "small" },
+                  { "name": "medium" },
+                  { "name": "large" }
+                ]
+              },
+              {
+                "name": "disabled",
+                "description": "Disabled state",
+                "valueSet": "v"
+              }
+            ]
+          },
+          {
+            "name": "include:card",
+            "description": "Card component",
+            "attributes": [
+              {
+                "name": "title",
+                "description": "Card title"
+              },
+              {
+                "name": "subtitle",
+                "description": "Card subtitle"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

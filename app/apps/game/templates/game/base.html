@@ -1,0 +1,149 @@
+{% load static %}
+<!doctype html>
+<html lang="ru">
+  <head>
+    <title>{% block title %}Роман Соколовский{% endblock %}</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      id="favicon-android"
+      rel="icon"
+      type="image/png"
+      sizes="192x192"
+      href="{% static 'game/images/icons/favicon/android-chrome-192x192.png' %}"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="{% static 'game/images/icons/favicon/apple-touch-icon.png' %}"
+    />
+    <meta name="theme-color" content="black" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <link rel="stylesheet" type="text/css" href="{% static 'game/css/base.css' %}" />
+    {% block extra_css %}
+    {% endblock %}
+  </head>
+  <body>
+    <header class="header">
+      <div class="header__logo">
+        <a href="{% url 'index' %}">Морской Бой</a>
+
+        <div class="header__logo_auth">
+          {% if request.user.is_authenticated %}
+            <span>{{ request.user.username }}</span>
+
+            <a href="{% url 'logout' %}">Выход</a>
+          {% else %}
+            <a href="{% url 'login' %}">Вход</a>
+
+            <a href="{% url 'register' %}">Регистрация</a>
+          {% endif %}
+        </div>
+      </div>
+
+      <nav class="header__menu">
+        <ul>
+          <li>
+            <a href="{% url 'index' %}">Главная</a>
+          </li>
+
+          <li>
+            <a href="{% url 'leaderboard' %}">Рейтинг</a>
+          </li>
+
+          {% if request.user.is_authenticated %}
+            <li>
+              <a href="{% url 'history' %}">История игр</a>
+            </li>
+          {% endif %}
+        </ul>
+      </nav>
+    </header>
+
+    <main class="main">
+      <div class="main__left">
+        <div class="block">
+          <div class="block__header">Статистика проекта</div>
+
+          <div class="block__main">
+            <ul class="block__main_list">
+              <li>Игроков: {{ total_users|default:"0" }}</li>
+
+              <li>Сыграно игр: {{ total_games|default:"0" }}</li>
+
+              <li>Завершено игр: {{ finished_games|default:"0" }}</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="block">
+          <div class="block__header">Правила</div>
+
+          <div class="block__main">
+            Поле 10×10.<br />
+
+            1 линкор, 2 крейсера,<br />
+
+            3 эсминца и 4 катера.
+          </div>
+        </div>
+      </div>
+
+      <div class="main__content">
+        {% block content %}
+          <div class="block">
+            <div class="block__header">Добро пожаловать</div>
+
+            <div class="block__main">
+              <h2>Морской Бой</h2>
+
+              <p>
+                Классическая игра против компьютера. Расставьте корабли, уничтожьте флот противника
+                и поднимайтесь в рейтинге лучших игроков.
+              </p>
+
+              {% if request.user.is_authenticated %}
+                <div class="actions">
+                  <a class="button" href="{% url 'new' %}"> Новая игра </a>
+
+                  <a class="button button_secondary" href="{% url 'history' %}"> История игр </a>
+                </div>
+              {% else %}
+                <div class="actions">
+                  <a class="button" href="{% url 'register' %}"> Начать играть </a>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        {% endblock %}
+      </div>
+
+      <div class="main__right">
+        <div class="block">
+          <div class="block__header">Топ игроков</div>
+
+          <div class="block__main">
+            {% for player in top_players %}
+              <div class="leaderboard__item">
+                <span>{{ player.username }}</span>
+
+                <span>{{ player.winrate }}%</span>
+              </div>
+
+              {% empty %} Пока нет данных.
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer__info">
+        <span>Морской Бой</span>
+
+        <span>© 2026</span>
+      </div>
+    </footer>
+  </body>
+  <script type="module" src="{% static 'blog/js/base.js' %}"></script>
+</html>

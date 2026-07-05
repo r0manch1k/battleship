@@ -1,0 +1,81 @@
+{
+  "Include Component": {
+    "scope": "django-html,html",
+    "prefix": ["inc", "include"],
+    "body": [
+      "<include:${1:component-name}${2: ${3:prop}=\"${4:value}\"}>",
+      "\t$0",
+      "</include:${1:component-name}>"
+    ],
+    "description": "Include component with props"
+  },
+
+  "Self-closing Component": {
+    "scope": "django-html,html",
+    "prefix": ["incs", "include-self"],
+    "body": [
+      "<include:${1:component-name}${2: ${3:prop}=\"${4:value}\"} />"
+    ],
+    "description": "Self-closing component"
+  },
+
+  "Content Block": {
+    "scope": "django-html,html",
+    "prefix": ["content", "cb"],
+    "body": [
+      "<content:${1:block-name}>",
+      "\t$0",
+      "</content:${1:block-name}>"
+    ],
+    "description": "Named content block"
+  },
+
+  "Component Props Definition": {
+    "scope": "django-html,html",
+    "prefix": ["props"],
+    "body": [
+      "{# props ${1:prop1}, ${2:prop2}=${3:default} #}"
+    ],
+    "description": "Component props definition"
+  },
+
+  "Attrs Tag": {
+    "scope": "django-html,html",
+    "prefix": ["attrs"],
+    "body": [
+      "{% attrs ${1:class}=\"${2:default-class}\" %}"
+    ],
+    "description": "Attrs template tag"
+  },
+
+  "Conditional Class": {
+    "scope": "django-html,html",
+    "prefix": ["class-if"],
+    "body": [
+      "class:${1:class-name}=${2:condition}"
+    ],
+    "description": "Conditional class attribute"
+  },
+
+  "IncludeContents Tag": {
+    "scope": "django-html,html",
+    "prefix": ["ict", "includecontents"],
+    "body": [
+      "{% includecontents \"${1:template-path}\"${2: ${3:prop}=${4:value}} %}",
+      "\t$0",
+      "{% endincludecontents %}"
+    ],
+    "description": "Traditional includecontents tag"
+  },
+
+  "Wrapif Tag": {
+    "scope": "django-html,html", 
+    "prefix": ["wrapif"],
+    "body": [
+      "{% wrapif ${1:condition} then \"${2:tag}\"${3: ${4:attr}=\"${5:value}\"} %}",
+      "\t$0",
+      "{% endwrapif %}"
+    ],
+    "description": "Wrapif conditional wrapper"
+  }
+}

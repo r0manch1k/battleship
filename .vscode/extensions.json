@@ -1,0 +1,13 @@
+{
+  "recommendations": [
+    "ms-python.python",
+    "batisteo.vscode-django", 
+    "esbenp.prettier-vscode",
+    "bradlc.vscode-tailwindcss",
+    "ms-python.black-formatter",
+    "charliermarsh.ruff"
+  ],
+  "unwantedRecommendations": [
+    "ms-python.pylint"
+  ]
+}

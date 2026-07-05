@@ -1,0 +1,40 @@
+{
+  "Button Component": {
+    "scope": "django-html,html",
+    "prefix": ["btn", "button"],
+    "body": [
+      "<include:button variant=\"${1|primary,secondary,danger}\" ${2:size=\"${3|small,medium,large}\"}>",
+      "\t${4:Button Text}",
+      "</include:button>"
+    ],
+    "description": "Button component"
+  },
+
+  "Card Component": {
+    "scope": "django-html,html",
+    "prefix": ["card"],
+    "body": [
+      "<include:card title=\"${1:Card Title}\">",
+      "\t${2:Card content}",
+      "\t<content:footer>",
+      "\t\t${3:Footer content}",
+      "\t</content:footer>",
+      "</include:card>"
+    ],
+    "description": "Card component with footer"
+  },
+
+  "Form Field": {
+    "scope": "django-html,html",
+    "prefix": ["field", "form-field"],
+    "body": [
+      "<include:forms:field",
+      "\tname=\"${1:field-name}\"",
+      "\tlabel=\"${2:Field Label}\"",
+      "\ttype=\"${3|text,email,password,number}\"",
+      "\t${4:required=\"true\"}",
+      "/>"
+    ],
+    "description": "Form field component"
+  }
+}

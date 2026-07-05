@@ -1,0 +1,15 @@
+{% extends "game/base.html" %}
+{% load static %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'users/css/base.css' %}" />
+{% endblock %}
+
+{% block content %}
+  <div class="auth">
+    <div class="auth__card block">
+      {% block auth_content %}
+      {% endblock %}
+    </div>
+  </div>
+{% endblock %}

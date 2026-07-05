@@ -1,0 +1,6 @@
+# .prettierignore
+node_modules/
+venv/
+dist/
+*.min.html
+third_party/
