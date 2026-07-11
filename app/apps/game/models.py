@@ -18,9 +18,9 @@ class Game(models.Model):
     )
 
     class Status(models.TextChoices):
-        WIN = "WIN", "Win"
-        LOSS = "LOSS", "Loss"
-        PROCESS = "PROCESS", "Process"
+        VICTORY = "VICTORY", "Victory"
+        DEFEAT = "DEFEAT", "Defeat"
+        FIGHT = "FIGHT", "Fight"
         PLACEMENT = "PLACEMENT", "Placement"
 
     status = models.CharField(
@@ -30,7 +30,7 @@ class Game(models.Model):
     )
 
     class Winner(models.TextChoices):
-        BOT = "BOT", "Computer"
+        COMPUTER = "COMPUTER", "Computer"
         PLAYER = "PLAYER", "Player"
 
     winner = models.CharField(
@@ -44,14 +44,14 @@ class Game(models.Model):
         self.winner = winner
 
         self.status = (
-            self.Status.WIN if winner == self.Winner.PLAYER else self.Status.LOSS
+            self.Status.VICTORY if winner == self.Winner.PLAYER else self.Status.DEFEAT
         )
 
         self.finished_at = timezone.now()
 
         self.save(update_fields=("winner", "status", "finished_at"))
 
-        GameResult.objects.update_or_create(
+        Result.objects.update_or_create(
             game=self,
             defaults={
                 "player": self.player,
@@ -61,7 +61,7 @@ class Game(models.Model):
         )
 
     def __str__(self):
-        return f"Game {self.pk} - {self.player}"
+        return f"Battle #{self.pk} - {self.player}"
 
 
 class Ship(models.Model):
@@ -76,7 +76,7 @@ class Ship(models.Model):
     )
 
     class Owner(models.TextChoices):
-        BOT = "BOT", "Computer"
+        COMPUTER = "COMPUTER", "Computer"
         PLAYER = "PLAYER", "Player"
 
     owner = models.CharField(
@@ -107,7 +107,7 @@ class Ship(models.Model):
 
 class Cell(models.Model):
     class Owner(models.TextChoices):
-        BOT = "BOT", "Computer"
+        COMPUTER = "COMPUTER", "Computer"
         PLAYER = "PLAYER", "Player"
 
     game = models.ForeignKey(
@@ -147,15 +147,15 @@ class Cell(models.Model):
         return f"{self.owner} ({self.x}, {self.y})"
 
 
-class Move(models.Model):
+class Turn(models.Model):
     game = models.ForeignKey(
         Game,
         on_delete=models.CASCADE,
-        related_name="moves",
+        related_name="turns",
     )
 
     class Owner(models.TextChoices):
-        BOT = "BOT", "Computer"
+        COMPUTER = "COMPUTER", "Computer"
         PLAYER = "PLAYER", "Player"
 
     owner = models.CharField(
@@ -169,7 +169,7 @@ class Move(models.Model):
     class Result(models.TextChoices):
         MISS = "MISS", "Miss"
         HIT = "HIT", "Hit"
-        SUNK = "SUNK", "Ship destroyed"
+        SUNK = "SUNK", "Sunk"
 
     result = models.CharField(
         max_length=10,
@@ -183,7 +183,7 @@ class Move(models.Model):
         constraints = [
             models.UniqueConstraint(
                 fields=("game", "owner", "x", "y"),
-                name="unique_move_per_target_cell",
+                name="unique_turn_per_target_cell",
             ),
         ]
 
@@ -191,7 +191,7 @@ class Move(models.Model):
         return f"{self.owner} ({self.x}, {self.y}) - {self.result}"
 
 
-class GameResult(models.Model):
+class Result(models.Model):
     game = models.OneToOneField(
         Game,
         on_delete=models.CASCADE,
@@ -200,7 +200,7 @@ class GameResult(models.Model):
     player = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name="game_results",
+        related_name="results",
     )
     winner = models.CharField(
         max_length=20,
@@ -213,8 +213,8 @@ class GameResult(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     @property
-    def is_win(self):
+    def is_victory(self):
         return self.winner == Game.Winner.PLAYER
 
     def __str__(self):
-        return f"Game result #{self.game.pk}: {self.status}"
+        return f"Result #{self.game.pk}: {self.status}"

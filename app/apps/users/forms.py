@@ -1,3 +1,4 @@
+from django import forms
 from django.contrib.auth.forms import UserCreationForm
 
 from app.apps.users.models import User
@@ -12,3 +13,9 @@ class RegisterForm(UserCreationForm):
             "password1",
             "password2",
         )
+
+
+class AvatarForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ("avatar",)

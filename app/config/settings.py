@@ -138,3 +138,8 @@ FILE_UPLOAD_HANDLERS = [
 LOGIN_REDIRECT_URL = "/game"
 
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
+# Battleship
+
+SIZE = 10
+FLEET = [4, 3, 3, 2, 2, 2, 1, 1, 1, 1]

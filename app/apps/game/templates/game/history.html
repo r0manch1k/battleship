@@ -1,13 +1,55 @@
 {% extends "game/base.html" %}
 
 {% block title %}
-  История игр
+  Game history
 {% endblock %}
 
 {% block content %}
   <div class="block">
-    <div class="block__header">История игр</div>
+    <div class="block__header">Game history</div>
 
-    <div class="block__main">Раздел находится в разработке.</div>
+    <div class="block__main">
+      <div class="stats-grid">
+        <div>Total: <strong>{{ stats.total }}</strong></div>
+        <div>Victories: <strong>{{ stats.wins }}</strong></div>
+        <div>Defeats: <strong>{{ stats.losses }}</strong></div>
+        <div>WR: <strong>{{ stats.winrate }}%</strong></div>
+      </div>
+
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Started</th>
+              <th>Finished</th>
+              <th>Status</th>
+              <th>Winner</th>
+              <th>Turns</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for game in games %}
+              <tr>
+                <td>#{{ game.id }}</td>
+                <td>{{ game.started_at|date:"Y-m-d H:i" }}</td>
+                <td>
+                  {% if game.finished_at %}{{ game.finished_at|date:"Y-m-d H:i" }}{% else %}-{% endif %}
+                </td>
+                <td>{{ game.status }}</td>
+                <td>{% if game.winner %}{{ game.winner }}{% else %}-{% endif %}</td>
+                <td>{{ game.turns.count }}</td>
+                <td><a href="{% url 'game_detail' game.id %}">Open</a></td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="7">None</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 {% endblock %}

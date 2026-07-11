@@ -65,19 +65,6 @@ shell: ## Запустить интерактивную консоль
 		uv run -m app.manage shell; \
 	fi
 
-.PHONY: keys
-keys: ## Сгенерировать публичный и приватный ключи
-	@printf "Вы хотите применить команду в контейнере? [Y/n]: " && read ans; \
-	if [ "$$ans" = "y" ] || [ "$$ans" = "Y" ] || [ -z "$$ans" ]; then \
-		echo "Выполняю в контейнере..."; \
-		$(COMPOSE) exec battleship-app openssl genpkey -algorithm RSA -out app/config/keys/private.pem -pkeyopt rsa_keygen_bits:2048 \
-			&& openssl rsa -pubout -in app/config/keys/private.pem -out app/config/keys/public.pem; \
-	else \
-		echo "Выполняю локально..."; \
-		openssl genpkey -algorithm RSA -out app/config/keys/private.pem -pkeyopt rsa_keygen_bits:2048 \
-			&& openssl rsa -pubout -in app/config/keys/private.pem -out app/config/keys/public.pem; \
-	fi
-
 .PHONY: build
 build: ## Собрать образы
 	$(COMPOSE) build

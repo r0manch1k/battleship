@@ -1,5 +1,13 @@
-{% extends "users/base.html" %} {% block content %}
-<p>Logged out!</p>
+{% extends "users/base.html" %}
 
-<a href="{% url 'login'%}">Click here to login again.</a>
+{% block auth_content %}
+  <div class="block__header">Logged out</div>
+
+  <div class="block__main">
+    <p>You have logged out.</p>
+
+    <div class="actions">
+      <a class="button" href="{% url 'login' %}">Log in again</a>
+    </div>
+  </div>
 {% endblock %}

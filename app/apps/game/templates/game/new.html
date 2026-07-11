@@ -1,13 +1,162 @@
 {% extends "game/base.html" %}
 
 {% block title %}
-  Новая игра
+  {% if game %}Game #{{ game.id }}{% else %}New game{% endif %}
 {% endblock %}
 
 {% block content %}
-  <div class="block">
-    <div class="block__header">Новая игра</div>
+  {% if game %}
+    <div class="block">
+      <div class="block__header">Game #{{ game.id }} - {{ game.get_status_display }}</div>
 
-    <div class="block__main">Здесь будет размещение кораблей и игровое поле.</div>
-  </div>
+      <div class="block__main">
+        <div class="game-status">
+          <span>Started: {{ game.started_at|date:"Y-m-d H:i" }}</span>
+          {% if game.finished_at %}
+            <span>Finished: {{ game.finished_at|date:"Y-m-d H:i" }}</span>
+          {% endif %}
+          {% if game.winner %}
+            <span>Winner: {{ game.get_winner_display }}</span>
+          {% endif %}
+        </div>
+
+        <div class="battlefield">
+          <section class="board-panel">
+            <h2>You</h2>
+            <div class="board">
+              {% for row in player_board %}
+                {% for cell in row %}
+                  <span
+                    class="cell {% if cell.has_ship %}cell_ship{% endif %} {% if cell.is_hit and cell.has_ship %}cell_hit{% elif cell.is_hit %}cell_miss{% endif %}"
+                  >
+                    {% if cell.is_hit and cell.has_ship %}×{% elif cell.is_hit %}•{% elif cell.has_ship %}■{% endif %}
+                  </span>
+                {% endfor %}
+              {% endfor %}
+            </div>
+          </section>
+
+          <section class="board-panel">
+            <h2>Computer</h2>
+            <div class="board">
+              {% for row in bot_board %}
+                {% for cell in row %}
+                  {% if game.status == "FIGHT" and not cell.is_hit %}
+                    <form method="post" action="{% url 'shoot' game.id %}" class="cell-form">
+                      {% csrf_token %}
+                      <input type="hidden" name="x" value="{{ cell.x }}" />
+                      <input type="hidden" name="y" value="{{ cell.y }}" />
+                      <button
+                        class="cell cell_target"
+                        type="submit"
+                        aria-label="Fire at {{ cell.x }}, {{ cell.y }}"
+                      ></button>
+                    </form>
+                  {% else %}
+                    <span
+                      class="cell {% if cell.is_hit and cell.has_ship %}cell_hit{% elif cell.is_hit %}cell_miss{% endif %}"
+                    >
+                      {% if cell.is_hit and cell.has_ship %}×{% elif cell.is_hit %}•{% endif %}
+                    </span>
+                  {% endif %}
+                {% endfor %}
+              {% endfor %}
+            </div>
+          </section>
+        </div>
+
+        <div class="moves">
+          <section>
+            <h3>Your shots</h3>
+            <ul>
+              {% for move in player_moves|slice:":10" %}
+                <li>
+                  {{ move.created_at|date:"H:i:s" }} - {{ move.x }},{{ move.y }}:
+                  {{ move.get_result_display }}
+                </li>
+                {% empty %}
+                <li>No shots yet.</li>
+              {% endfor %}
+            </ul>
+          </section>
+
+          <section>
+            <h3>Computer shots</h3>
+            <ul>
+              {% for move in bot_moves|slice:":10" %}
+                <li>
+                  {{ move.created_at|date:"H:i:s" }} - {{ move.x }},{{ move.y }}:
+                  {{ move.get_result_display }}
+                </li>
+                {% empty %}
+                <li>No shots yet.</li>
+              {% endfor %}
+            </ul>
+          </section>
+        </div>
+
+        <div class="actions">
+          <a class="button button_secondary" href="{% url 'history' %}">History</a>
+          <a class="button" href="{% url 'new' %}">New game</a>
+        </div>
+      </div>
+    </div>
+  {% else %}
+    <div class="block">
+      <div class="block__header">Place ships</div>
+
+      <div class="block__main">
+        <form method="post" id="placement-form" class="placement">
+          {% csrf_token %}
+          <input type="hidden" name="ships" id="ships-input" />
+
+          <div class="placement__tools">
+            <label>
+              Ship
+              <select id="ship-length">
+                {% for length in fleet %}
+                  <option value="{{ length }}">{{ length }} cells</option>
+                {% endfor %}
+              </select>
+            </label>
+
+            <label>
+              Direction
+              <select id="ship-orientation">
+                <option value="H">Horizontal</option>
+                <option value="V">Vertical</option>
+              </select>
+            </label>
+
+            <button class="button button_secondary" type="button" id="reset-placement">
+              Clear
+            </button>
+          </div>
+
+          <div class="board board_placement" id="placement-board">
+            {% for y in size %}
+              {% for x in size %}
+                <button
+                  class="cell cell_target"
+                  type="button"
+                  data-x="{{ x }}"
+                  data-y="{{ y }}"
+                ></button>
+              {% endfor %}
+            {% endfor %}
+          </div>
+
+          <div class="placement__summary">
+            <span id="placement-count">Ships placed: 0 / 10</span>
+            <span>Fleet: 4, 3, 3, 2, 2, 2, 1, 1, 1, 1</span>
+          </div>
+
+          <div class="actions">
+            <button class="button" type="submit">Start game</button>
+            <a class="button button_secondary" href="{% url 'index' %}">Home</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  {% endif %}
 {% endblock %}

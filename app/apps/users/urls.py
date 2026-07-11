@@ -35,4 +35,9 @@ urlpatterns = [
         views.PasswordResetCompleteView.as_view(),
         name="password_reset_complete",
     ),
+    path(
+        "profile/",
+        myviews.ProfileView.as_view(),
+        name="profile",
+    ),
 ]

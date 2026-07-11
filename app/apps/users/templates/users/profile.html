@@ -1,0 +1,36 @@
+{% extends "users/base.html" %}
+
+{% block title %}
+  Profile
+{% endblock %}
+
+{% block auth_content %}
+  <div class="block__header">Profile</div>
+
+  <div class="block__main">
+    <div class="profile__head">
+      {% if profile_user.avatar %}
+        <img class="avatar" src="{{ profile_user.avatar.url }}" alt="avatar" />
+      {% else %}
+        <div class="avatar avatar_empty">No photo</div>
+      {% endif %}
+      <div>
+        <p><strong>{{ profile_user.username }}</strong></p>
+        <p>{{ profile_user.email }}</p>
+      </div>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" class="auth__form">
+      {% csrf_token %}
+      <div class="form__group">
+        <label for="{{ form.avatar.id_for_label }}">Change avatar</label>
+        {{ form.avatar }}
+      </div>
+      <button type="submit" class="button">Save</button>
+    </form>
+
+    <div class="actions">
+      <a class="button button_secondary" href="{% url 'password_change' %}">Change password</a>
+    </div>
+  </div>
+{% endblock %}

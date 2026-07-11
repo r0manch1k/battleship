@@ -1,10 +1,11 @@
 {% load static %}
 <!doctype html>
-<html lang="ru">
+<html lang="en">
   <head>
-    <title>{% block title %}Роман Соколовский{% endblock %}</title>
+    <title>{% block title %}Battleship{% endblock %}</title>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#ffffff" />
     <link
       id="favicon-android"
       rel="icon"
@@ -17,133 +18,112 @@
       sizes="180x180"
       href="{% static 'game/images/icons/favicon/apple-touch-icon.png' %}"
     />
-    <meta name="theme-color" content="black" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
     <link rel="stylesheet" type="text/css" href="{% static 'game/css/base.css' %}" />
-    {% block extra_css %}
+    {% block extrahead %}
     {% endblock %}
   </head>
   <body>
     <header class="header">
-      <div class="header__logo">
-        <a href="{% url 'index' %}">Морской Бой</a>
+      <a class="header__logo" href="{% url 'index' %}">Battleship</a>
 
-        <div class="header__logo_auth">
-          {% if request.user.is_authenticated %}
-            <span>{{ request.user.username }}</span>
-
-            <a href="{% url 'logout' %}">Выход</a>
-          {% else %}
-            <a href="{% url 'login' %}">Вход</a>
-
-            <a href="{% url 'register' %}">Регистрация</a>
+      <nav class="header__nav">
+        <a href="{% url 'index' %}">Home</a>
+        <a href="{% url 'leaderboard' %}">Leaders</a>
+        {% if request.user.is_authenticated %}
+          <a href="{% url 'history' %}">History</a>
+          <a href="{% url 'profile' %}">Profile</a>
+          {% if request.user.avatar %}
+            <img class="header__avatar" src="{{ request.user.avatar.url }}" alt="avatar" />
           {% endif %}
-        </div>
-      </div>
-
-      <nav class="header__menu">
-        <ul>
-          <li>
-            <a href="{% url 'index' %}">Главная</a>
-          </li>
-
-          <li>
-            <a href="{% url 'leaderboard' %}">Рейтинг</a>
-          </li>
-
-          {% if request.user.is_authenticated %}
-            <li>
-              <a href="{% url 'history' %}">История игр</a>
-            </li>
-          {% endif %}
-        </ul>
+          <span class="header__user">{{ request.user.username }}</span>
+          <form method="post" action="{% url 'logout' %}" class="header__logout">
+            {% csrf_token %}
+            <button type="submit" class="header__logout-btn">Log out</button>
+          </form>
+        {% else %}
+          <a href="{% url 'login' %}">Log in</a>
+          <a href="{% url 'register' %}">Sign up</a>
+        {% endif %}
       </nav>
     </header>
 
     <main class="main">
-      <div class="main__left">
+      <div class="sidebar">
         <div class="block">
-          <div class="block__header">Статистика проекта</div>
-
+          <div class="block__header">Stats</div>
           <div class="block__main">
-            <ul class="block__main_list">
-              <li>Игроков: {{ total_users|default:"0" }}</li>
-
-              <li>Сыграно игр: {{ total_games|default:"0" }}</li>
-
-              <li>Завершено игр: {{ finished_games|default:"0" }}</li>
+            <ul class="block__list">
+              <li>Players: {{ total_users|default:"0" }}</li>
+              <li>Games: {{ total_games|default:"0" }}</li>
+              <li>Finished: {{ finished_games|default:"0" }}</li>
             </ul>
           </div>
         </div>
 
         <div class="block">
-          <div class="block__header">Правила</div>
-
+          <div class="block__header">Highscores</div>
           <div class="block__main">
-            Поле 10×10.<br />
-
-            1 линкор, 2 крейсера,<br />
-
-            3 эсминца и 4 катера.
+            <ul class="block__list">
+              {% for player in top_players %}
+                <li>{{ player.username }} - {{ player.winrate }}%</li>
+                {% empty %}
+                <li>None</li>
+              {% endfor %}
+            </ul>
           </div>
         </div>
+
+        {% block top_messages %}
+          {% if messages %}
+            <div class="block">
+              <div class="block__header">Messages</div>
+              <div class="block__main">
+                <ul class="block__list">
+                  {% for message in messages %}
+                    <li class="message message_{{ message.tags }}">{{ message }}</li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </div>
+          {% endif %}
+        {% endblock %}
       </div>
 
-      <div class="main__content">
+      <section class="content">
         {% block content %}
           <div class="block">
-            <div class="block__header">Добро пожаловать</div>
-
+            <div class="block__header">Welcome</div>
             <div class="block__main">
-              <h2>Морской Бой</h2>
-
+              <h1>Battleship</h1>
               <p>
-                Классическая игра против компьютера. Расставьте корабли, уничтожьте флот противника
-                и поднимайтесь в рейтинге лучших игроков.
+                Call out your coordinates and see if you score a hit or a miss... but look out for
+                the counter attacks! Will you sub the sunk? Will your cruiser be crushed?
               </p>
-
+              <p>First to sink the other's fleet of five is the winner!</p>
               {% if request.user.is_authenticated %}
-                <div class="actions">
-                  <a class="button" href="{% url 'new' %}"> Новая игра </a>
-
-                  <a class="button button_secondary" href="{% url 'history' %}"> История игр </a>
-                </div>
+                <p>
+                  <a class="button" href="{% url 'new' %}">Play</a>
+                  <a class="button button_secondary" href="{% url 'history' %}">History</a>
+                </p>
               {% else %}
-                <div class="actions">
-                  <a class="button" href="{% url 'register' %}"> Начать играть </a>
-                </div>
+                <p>
+                  <a class="button" href="{% url 'login' %}">Log in</a>
+                  <a class="button button_secondary" href="{% url 'register' %}">Sign up</a>
+                </p>
               {% endif %}
             </div>
           </div>
         {% endblock %}
-      </div>
-
-      <div class="main__right">
-        <div class="block">
-          <div class="block__header">Топ игроков</div>
-
-          <div class="block__main">
-            {% for player in top_players %}
-              <div class="leaderboard__item">
-                <span>{{ player.username }}</span>
-
-                <span>{{ player.winrate }}%</span>
-              </div>
-
-              {% empty %} Пока нет данных.
-            {% endfor %}
-          </div>
-        </div>
-      </div>
+      </section>
     </main>
 
     <footer class="footer">
-      <div class="footer__info">
-        <span>Морской Бой</span>
-
-        <span>© 2026</span>
-      </div>
+      <span>Battleship</span>
+      <span>© 2026</span>
     </footer>
+
+    <script type="module" src="{% static 'game/js/base.js' %}"></script>
+    {% block scripts %}
+    {% endblock %}
   </body>
-  <script type="module" src="{% static 'blog/js/base.js' %}"></script>
 </html>

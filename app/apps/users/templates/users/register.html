@@ -1,11 +1,11 @@
 {% extends "users/base.html" %}
 
 {% block title %}
-  Регистрация
+  Sign up
 {% endblock %}
 
 {% block auth_content %}
-  <div class="block__header">Регистрация</div>
+  <div class="block__header">Sign up</div>
 
   <div class="block__main">
     <form method="post" class="auth__form">
@@ -27,11 +27,11 @@
         </div>
       {% endfor %}
 
-      <button type="submit" class="button">Зарегистрироваться</button>
+      <button type="submit" class="button">Create account</button>
     </form>
 
     <div class="auth__links">
-      <a href="{% url 'login' %}"> Уже есть аккаунт? </a>
+      <a href="{% url 'login' %}">Already have an account?</a>
     </div>
   </div>
 {% endblock %}
