@@ -57,3 +57,13 @@ make migrate
 ```
 http://localhost:${APP_PORT}/game
 ```
+
+## Галерея
+
+![Главная страница](docs/images/home.png)
+
+![Пример регистрации](docs/images/registration.png)
+
+![Пример боя](docs/images/battle.png)
+
+![Пример таблицы лидеров](docs/images/leaderboard.png)
