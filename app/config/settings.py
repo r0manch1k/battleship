@@ -64,6 +64,8 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                # https://docs.djangoproject.com/en/6.0/ref/templates/api/#configuring-an-engine
+                "app.apps.game.context.sidebar",
             ],
         },
     },

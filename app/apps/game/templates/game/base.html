@@ -50,12 +50,12 @@
     <main class="main">
       <div class="sidebar">
         <div class="block">
-          <div class="block__header">Stats</div>
+          <div class="block__header">Global stats</div>
           <div class="block__main">
             <ul class="block__list">
-              <li>Players: {{ total_users|default:"0" }}</li>
-              <li>Games: {{ total_games|default:"0" }}</li>
-              <li>Finished: {{ finished_games|default:"0" }}</li>
+              <li>Players: {{ nusers|default:"0" }}</li>
+              <li>Games: {{ ngames|default:"0" }}</li>
+              <li>Finished: {{ nfinished|default:"0" }}</li>
             </ul>
           </div>
         </div>
@@ -64,7 +64,7 @@
           <div class="block__header">Highscores</div>
           <div class="block__main">
             <ul class="block__list">
-              {% for player in top_players %}
+              {% for player in highscores %}
                 <li>{{ player.username }} - {{ player.winrate }}%</li>
                 {% empty %}
                 <li>None</li>

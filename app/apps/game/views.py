@@ -38,9 +38,9 @@ def history(request: HttpRequest):
         .order_by("-started_at")
     )
     total = games.count()
-    wins = games.filter(winner=Game.Winner.PLAYER).count()
+    nwins = games.filter(winner=Game.Winner.PLAYER).count()
     losses = games.filter(winner=Game.Winner.COMPUTER).count()
-    winrate = round(wins / total * 100, 1) if total else 0
+    winrate = round(nwins / total * 100, 1) if total else 0
 
     return render(
         request,
@@ -50,7 +50,7 @@ def history(request: HttpRequest):
                 "games": games,
                 "stats": {
                     "total": total,
-                    "wins": wins,
+                    "nwins": nwins,
                     "losses": losses,
                     "winrate": winrate,
                 },
@@ -153,14 +153,14 @@ def shoot(request: HttpRequest, pk: int):
 
 # Собирает общий контекст для всех страниц.
 def _context(extra: dict | None = None) -> dict:
-    users_count = get_user_model().objects.count()
-    total_games = Game.objects.count()
-    finished_games = Game.objects.exclude(finished_at__isnull=True).count()
+    nusers = get_user_model().objects.count()
+    ngames = Game.objects.count()
+    nfinished = Game.objects.exclude(finished_at__isnull=True).count()
     context = {
-        "total_users": users_count,
-        "total_games": total_games,
-        "finished_games": finished_games,
-        "top_players": _highscores(limit=5),
+        "nusers": nusers,
+        "ngames": ngames,
+        "nfinished": nfinished,
+        "highscores": _highscores(limit=5),
     }
     if extra:
         context.update(extra)
@@ -172,22 +172,23 @@ def _highscores(limit: int | None = 10) -> list:
     rows = (
         get_user_model()
         .objects.annotate(
-            games_played=Count(
+            ngames=Count(
                 "games",
                 filter=Q(games__status__in=[Game.Status.VICTORY, Game.Status.DEFEAT]),
             ),
-            wins=Count("games", filter=Q(games__winner=Game.Winner.PLAYER)),
+            nwins=Count("games", filter=Q(games__winner=Game.Winner.PLAYER)),
         )
-        .filter(games_played__gte=10)
+        .filter(ngames__gte=10)
     )
 
     players = []
+
     for user in rows:
-        winrate = round(user.wins / user.games * 100, 1)  # type: ignore
+        winrate = round(user.nwins / user.ngames * 100, 1)  # type: ignore
         user.winrate = winrate  # type: ignore
         players.append(user)
 
-    players.sort(key=lambda player: (-player.winrate, -player.wins, player.username))
+    players.sort(key=lambda player: (-player.winrate, -player.nwins, player.username))
     return players if limit is None else players[:limit]
 
 

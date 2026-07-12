@@ -8,6 +8,10 @@ from django.views.generic.edit import FormView
 from app.apps.users.forms import AvatarForm, RegisterForm
 
 
+class LogoutView(views.LogoutView):
+    template_name = "users/logged_out.html"
+
+
 class LoginView(views.LoginView):
     template_name = "users/login.html"
 

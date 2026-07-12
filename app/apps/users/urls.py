@@ -10,7 +10,7 @@ urlpatterns = [
         myviews.RegisterView.as_view(),
         name="register",
     ),
-    path("logout/", views.LogoutView.as_view(), name="logout"),
+    path("logout/", myviews.LogoutView.as_view(), name="logout"),
     path(
         "password_change/", views.PasswordChangeView.as_view(), name="password_change"
     ),
